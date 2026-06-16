@@ -1,6 +1,6 @@
 import React, { Component, useState } from 'react'
 import {useNavigate} from 'react-router-dom';
-import StateCard from '../components/stateCard';
+import StateCard from '../components/StateCard';
 import { useSelector } from 'react-redux';
 import { Plus, Eye, CheckCircle, TrendingUp, DollarSign, WalletIcon, ArrowDownCircleIcon, CoinsIcon, StarIcon, LockIcon, User, Users, BanIcon, XCircle, Clock, TrashIcon, Edit, EyeOffIcon, EyeIcon } from "lucide-react";
 import { platformIcons } from '../assets/assets';
