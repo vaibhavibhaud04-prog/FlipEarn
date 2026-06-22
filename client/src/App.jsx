@@ -36,7 +36,7 @@ const App = () => {
         <Route path='/Listing/:listingId' element={<ListingDetails />} />
         <Route path='/create-listing' element={<ManageListing />} />
         <Route path='/edit-listing/:id' element={<ManageListing />} />
-        <Route path='/messages' element={<Messages />} />
+        <Route path='/message' element={<Messages />} />
         <Route path='/my-orders' element={<MyOrders />} />
         <Route path='/loading' element={<Loading />} />
 

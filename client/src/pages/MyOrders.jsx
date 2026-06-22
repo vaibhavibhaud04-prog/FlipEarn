@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react'
 import { dummyOrders } from '../assets/assets';
-import { Loader2Icon } from 'lucide-react';
+import { ChevronDown, ChevronUp, Loader2Icon, Copy } from 'lucide-react';
+import {format} from 'date-fns';
+
 
 const MyOrders = () => {
   const currency=import.meta.env.VITE_CURRENCY || "$";
@@ -55,58 +57,113 @@ const MyOrders = () => {
     <div className="px-4 md:px-16 lg:px-24 xl:px-32 py-6">
       <h2 className="text-2xl font-semibold mb-6">My Orders</h2>
 
-      <div>
-        {orders.map((orders)=>{
-        const id = orders.id;
-        const listing = orders.listing;
-        const credential = orders.credential;
-        const isExpanded = expandedId === id;
+     <div className="space-y-5 max-w-5xl">
+  {orders.map((order) => {
+    const isExpanded = expandedId === order.id;
 
+    return (
+      <div
+        key={order.id}
+        className="bg-white border rounded-lg p-5 shadow-sm"
+      >
+        {/* Top */}
+        <div className="flex flex-col md:flex-row justify-between gap-5">
+          {/* Left */}
+          <div className="flex-1">
+            <h3 className="font-semibold text-lg">
+              {order.listing.title}
+            </h3>
 
-        return(
-        <div key={id} className="bg-white rounded-lg border border-gray-200 p-5 flex flex-col max-w-4xl">
-        <div className="flex items-start gap-4 flex-1">
-          <div className="p-2 rounded-lg bg-gray-50 max-sm:hidden">
-            {platformIcons[listing.platform]}
-          </div>
-        
-
-        <div className="flex-1">
-          <div className="flex items-start justify-between gap-4">
-            <div>
-              <h3 className="text-lg font-semibold">{listing.title}</h3>
-              <p className="text-sm text-gray-500 mt-1">
-                @{listing.username} • <span className="capitalize">{listing.platform}</span>
-              </p>
-        <div className="flex gap-2 mt-2">
-          {listing.verified && (
-            <span className="flex items-center text-xs bg-indigo-50 text-indigo-600 px-2 py-1 rounded-md">
-              <CheckCircle2 className="w-3 h-3 mr-1"/> Verified
-            </span>
-          )}
-          {listing.monetized && (
-            <span className="flex items-center text-xs bg-green-50 text-green-600 px-2 py-1 rounded-md">
-              <span className="text-xs font-medium mr-1">$</span>
-              Monetized
-            </span>
-          )}
-          </div>
-          </div>
-
-          <div className='text-right'>
-            <p className='text-2xl font-bold'>
-              {currency}
-              {Number(orders.amount).toLocaleString()}
+            <p className="text-sm text-gray-500 mt-1">
+              @{order.listing.username} • {order.listing.platform}
             </p>
-            <p className='text-sm text-gray-500'>USD</p>
+
+            <div className="flex gap-2 mt-3">
+              {order.listing.verified && (
+                <span className="text-xs bg-indigo-100 text-indigo-600 px-2 py-1 rounded">
+                  Verified
+                </span>
+              )}
+
+              {order.listing.monetized && (
+                <span className="text-xs bg-green-100 text-green-600 px-2 py-1 rounded">
+                  Monetized
+                </span>
+              )}
+            </div>
           </div>
+
+          {/* Right */}
+          <div className="md:text-right">
+            <h2 className="text-3xl font-bold">
+              {currency}
+              {Number(order.amount).toLocaleString()}
+            </h2>
+
+            <p className="text-sm text-gray-400">USD</p>
+
+            <button
+              onClick={() =>
+                setExpandedId((prev) =>
+                  prev === order.id ? null : order.id
+                )
+              }
+              className="mt-3 border px-4 py-2 rounded flex items-center gap-2 text-sm hover:bg-gray-50 md:ml-auto"
+            >
+              {isExpanded ? (
+                <>
+                  <ChevronUp size={16} />
+                  Hide Credentials
+                </>
+              ) : (
+                <>
+                  <ChevronDown size={16} />
+                  View Credentials
+                </>
+              )}
+            </button>
+
+            <p className="text-xs text-gray-400 mt-3">
+              Credential Purchased{" "}
+              {format(new Date(order.createdAt), "MMM d, yyyy")}
+            </p>
           </div>
         </div>
-        </div>
-        </div>
-        )
-        })}
+
+        {/* Credentials */}
+        {isExpanded && (
+          <div className="mt-6 border-t pt-4 space-y-3">
+            {order.credential.updatedCredential.map((cred) => (
+              <div
+                key={cred.name}
+                className="bg-gray-50 rounded-md px-4 py-3 flex items-center justify-between"
+              >
+                <div>
+                  <p className="font-medium text-sm">
+                    {cred.name}
+                  </p>
+
+                  <p className="text-sm text-gray-400">
+                    {mask(cred.value, cred.type)}
+                  </p>
+                </div>
+
+                <button
+                  onClick={() =>
+                    navigator.clipboard.writeText(cred.value)
+                  }
+                  className="text-gray-500 hover:text-black"
+                >
+                  <Copy size={18} />
+                </button>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
+    );
+  })}
+</div>
     </div>
   )
 }
